@@ -26,6 +26,22 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.dcfa_pixels.dragonecs": {
+      "version": "https://github.com/DCFApixels/DragonECS.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "4512245e57e5d947bfdc57446edc0e9cfeb781f0"
+    },
+    "com.dcfa_pixels.dragonecs-unity": {
+      "version": "https://github.com/DCFApixels/DragonECS-Unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.dcfa_pixels.dragonecs": "https://github.com/DCFApixels/DragonECS.git"
+      },
+      "hash": "bdeb2f8b58e6f1660b5a93533a7741a807e84aa9"
+    },
     "com.tuyoogame.yooasset": {
       "version": "file:YooAsset",
       "depth": 0,
