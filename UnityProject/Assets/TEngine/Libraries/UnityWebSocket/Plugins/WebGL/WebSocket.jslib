@@ -22,19 +22,7 @@ var WebSocketLibrary =
         onMessage: null,
         onMessageStr: null,
         onError: null,
-        onClose: null,
-
-        /* Support Unity 6000 */
-        support6000: false
-    },
-
-    /**
-     * Support Unity 6000
-     *
-     */
-    WebSocketSetSupport6000: function()
-    {
-        webSocketManager.support6000 = true;
+        onClose: null
     },
 
     /**
@@ -166,14 +154,7 @@ var WebSocketLibrary =
 
         instance.ws.onopen = function()
         {
-            if (webSocketManager.support6000)
-            {
-                {{{ makeDynCall('vi', 'webSocketManager.onOpen') }}}(instanceId);
-            }
-            else
-            {
-                Module.dynCall_vi(webSocketManager.onOpen, instanceId);
-            }
+            Module.dynCall_vi(webSocketManager.onOpen, instanceId);
         };
 
         instance.ws.onmessage = function(ev)
@@ -185,14 +166,7 @@ var WebSocketLibrary =
                 writeArrayToMemory(array, buffer);
                 try
                 {
-                    if (webSocketManager.support6000)
-                    {
-                        {{{ makeDynCall('viii', 'webSocketManager.onMessage') }}}(instanceId, buffer, array.length);
-                    }
-                    else
-                    {
-                        Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, array.length);
-                    }
+                    Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, array.length);
                 }
                 finally
                 {
@@ -206,14 +180,7 @@ var WebSocketLibrary =
                 stringToUTF8(ev.data, buffer, length);
                 try
                 {
-                    if (webSocketManager.support6000)
-                    {
-                        {{{ makeDynCall('vii', 'webSocketManager.onMessageStr') }}}(instanceId, buffer);
-                    }
-                    else
-                    {
-                        Module.dynCall_vii(webSocketManager.onMessageStr, instanceId, buffer);
-                    }
+                    Module.dynCall_vii(webSocketManager.onMessageStr, instanceId, buffer);
                 }
                 finally
                 {
@@ -230,14 +197,7 @@ var WebSocketLibrary =
                     writeArrayToMemory(array, buffer);
                     try
                     {
-                        if (webSocketManager.support6000)
-                        {
-                            {{{ makeDynCall('viii', 'webSocketManager.onMessage') }}}(instanceId, buffer, array.length);
-                        }
-                        else
-                        {
-                            Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, array.length);
-                        }
+                        Module.dynCall_viii(webSocketManager.onMessage, instanceId, buffer, array.length);
                     }
                     finally
                     {
@@ -261,14 +221,7 @@ var WebSocketLibrary =
             stringToUTF8(msg, buffer, length);
             try
             {
-                if (webSocketManager.support6000)
-                {
-                    {{{ makeDynCall('vii', 'webSocketManager.onError') }}}(instanceId, buffer);
-                }
-                else
-                {
-                    Module.dynCall_vii(webSocketManager.onError, instanceId, buffer);
-                }
+                Module.dynCall_vii(webSocketManager.onError, instanceId, buffer);
             }
             finally
             {
@@ -284,14 +237,7 @@ var WebSocketLibrary =
             stringToUTF8(msg, buffer, length);
             try
             {
-                if (webSocketManager.support6000)
-                {
-                    {{{ makeDynCall('viii', 'webSocketManager.onClose') }}}(instanceId, ev.code, buffer);
-                }
-                else
-                {
-                    Module.dynCall_viii(webSocketManager.onClose, instanceId, ev.code, buffer);
-                }
+                Module.dynCall_viii(webSocketManager.onClose, instanceId, ev.code, buffer);
             }
             finally
             {
@@ -338,7 +284,7 @@ var WebSocketLibrary =
      * @param bufferPtr Pointer to the message buffer
      * @param length Length of the message in the buffer
      */
-    WebSocketSend: function(instanceId, bufferPtr, length)
+    WebSocketSend: function(instanceId, bufferPtr, offset, length)
     {
         var instance = webSocketManager.instances[instanceId];
         if (!instance) return -1;
@@ -346,9 +292,9 @@ var WebSocketLibrary =
         if (instance.ws.readyState !== 1) return -6;
 
         if (typeof HEAPU8 !== 'undefined')
-            instance.ws.send(HEAPU8.buffer.slice(bufferPtr, bufferPtr + length));
+            instance.ws.send(HEAPU8.buffer.slice(bufferPtr + offset, bufferPtr + length));
         else if (typeof buffer !== 'undefined')
-            instance.ws.send(buffer.slice(bufferPtr, bufferPtr + length));
+            instance.ws.send(buffer.slice(bufferPtr + offset, bufferPtr + length));
         else
             return -8; // not support buffer slice
 

@@ -106,6 +106,15 @@ namespace UnityWebSocket
             var buffer = new SendBuffer(data, WebSocketMessageType.Binary);
             sendQueue.Enqueue(buffer);
         }
+        
+        public void SendAsync(byte[] data, int offset, int len)
+        {
+            if (!isOpening) return;
+            var tmp = new byte[len];
+            System.Buffer.BlockCopy(data, offset, tmp, offset, len);
+            var buffer = new SendBuffer(tmp, WebSocketMessageType.Binary);
+            sendQueue.Enqueue(buffer);
+        }
 
         public void SendAsync(string text)
         {
@@ -174,7 +183,7 @@ namespace UnityWebSocket
                         Log($"Send, type: {buffer.type}, size: {buffer.data.Length}, queue left: {sendQueue.Count}");
                         await socket.SendAsync(new ArraySegment<byte>(buffer.data), buffer.type, true, cts.Token);
                     }
-                    Thread.Sleep(3);
+                    Thread.Sleep(1);
                 }
                 if (closeProcessing && socket != null && cts != null && !cts.IsCancellationRequested)
                 {

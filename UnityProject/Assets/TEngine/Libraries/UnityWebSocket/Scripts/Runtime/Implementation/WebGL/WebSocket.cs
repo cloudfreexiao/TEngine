@@ -82,10 +82,10 @@ namespace UnityWebSocket
             if (code < 0) HandleOnError(GetErrorMessageFromCode(code));
         }
 
-        public void SendAsync(byte[] data)
+       public void SendAsync(byte[] data, int offset, int len)
         {
             Log($"Send, type: {Opcode.Binary}, size: {data.Length}");
-            int code = WebSocketManager.WebSocketSend(instanceId, data, data.Length);
+            int code = WebSocketManager.WebSocketSend(instanceId, data, offset, len);
             if (code < 0) HandleOnError(GetErrorMessageFromCode(code));
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace UnityWebSocket
 {
@@ -69,13 +69,15 @@ namespace UnityWebSocket
         /// <param name="data">
         /// An array of <see cref="byte"/> that represents the binary data to send.
         /// </param>
+        /// <param name="offset"></param>
+        /// <param name="len"></param>
         /// <exception cref="InvalidOperationException">
         /// The current state of the connection is not Open.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="data"/> is <see langword="null"/>.
         /// </exception>
-        void SendAsync(byte[] data);
+        void SendAsync(byte[] data, int offset, int len);
 
         /// <summary>
         /// Sends the specified data using the WebSocket connection.
