@@ -285,6 +285,7 @@ namespace GameLogic
             if (_isCreate == false)
             {
                 _isCreate = true;
+                Inject();
                 ScriptGenerator();
                 BindMemberProperty();
                 RegisterEvent();

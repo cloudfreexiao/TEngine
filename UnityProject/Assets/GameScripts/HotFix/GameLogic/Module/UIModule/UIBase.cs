@@ -12,6 +12,12 @@ namespace GameLogic
     public class UIBase
     {
         /// <summary>
+        /// 依赖注入回调。外部可设置为接收一个 UIBase 实例的委托，
+        /// 在 UI 初始化或创建时由框架调用以注入所需的服务/依赖。
+        /// </summary>
+        public static Action<UIBase>? Injector;
+
+        /// <summary>
         /// UI类型。
         /// </summary>
         public enum UIType
@@ -46,7 +52,7 @@ namespace GameLogic
         /// 自定义数据集。
         /// </summary>
         protected System.Object[] _userDatas;
-        
+
         /// <summary>
         /// 自定义数据。
         /// </summary>
@@ -117,6 +123,14 @@ namespace GameLogic
         /// 是否标记脏排序
         /// </summary>
         protected bool _isSortingOrderDirty = false;
+
+        /// <summary>
+        /// 依赖注入。
+        /// </summary>
+        protected void Inject()
+        {
+            Injector?.Invoke(this);
+        }
 
         /// <summary>
         /// 代码自动生成绑定。

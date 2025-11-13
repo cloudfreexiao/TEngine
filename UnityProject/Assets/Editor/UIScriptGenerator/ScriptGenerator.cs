@@ -84,7 +84,7 @@ namespace TEngine.Editor.UI
                     strFile.Append("using TEngine;\n\n");
                     strFile.Append($"namespace {ScriptGeneratorSetting.GetUINameSpace()}\n");
                     strFile.Append("{\n");
-                    
+
                     var widgetPrefix = $"{(ScriptGeneratorSetting.GetCodeStyle() == UIFieldCodeStyle.MPrefix ? "m_" : "_")}{ScriptGeneratorSetting.GetWidgetName()}";
                     if (root.name.StartsWith(widgetPrefix))
                     {
@@ -95,18 +95,21 @@ namespace TEngine.Editor.UI
                         strFile.Append($"\t[Window(UILayer.UI,location:\"{root.name}\")]\n");
                         strFile.Append("\tclass " + root.name + " : UIWindow\n");
                     }
-                    
+
                     strFile.Append("\t{\n");
                 }
 
                 // 脚本工具生成的代码
                 strFile.Append("\t\t#region 脚本工具生成的代码\n");
+                strFile.Append("\n");
                 strFile.Append(strVar);
+                strFile.Append("\n");
                 strFile.Append("\t\tprotected override void ScriptGenerator()\n");
                 strFile.Append("\t\t{\n");
                 strFile.Append(strBind);
                 strFile.Append(strOnCreate);
                 strFile.Append("\t\t}\n");
+                strFile.Append("\n");
                 strFile.Append("\t\t#endregion");
 
                 if (includeListener)
@@ -203,7 +206,7 @@ namespace TEngine.Editor.UI
             ref StringBuilder strCallback, bool isUniTask)
         {
             string varName = child.name;
-            
+
             string componentName = string.Empty;
 
             var rule = ScriptGeneratorSetting.GetScriptGenerateRule().Find(t => varName.StartsWith(t.uiElementRegex));
@@ -212,22 +215,21 @@ namespace TEngine.Editor.UI
             {
                 componentName = rule.componentName.ToString();
             }
-            
+
             bool isUIWidget = rule is { isUIWidget: true };
 
             if (componentName == string.Empty)
             {
                 return;
             }
-            
+
             var codeStyle = ScriptGeneratorSetting.Instance.CodeStyle;
             if (codeStyle == UIFieldCodeStyle.UnderscorePrefix)
             {
                 if (varName.StartsWith("_"))
                 {
-                    
                 }
-                else if(varName.StartsWith("m_"))
+                else if (varName.StartsWith("m_"))
                 {
                     varName = varName.Substring(1);
                 }
@@ -240,7 +242,6 @@ namespace TEngine.Editor.UI
             {
                 if (varName.StartsWith("m_"))
                 {
-                    
                 }
                 else if (varName.StartsWith("_"))
                 {
@@ -255,7 +256,7 @@ namespace TEngine.Editor.UI
             string varPath = GetRelativePath(child, root);
             if (!string.IsNullOrEmpty(varName))
             {
-                strVar.Append("\t\tprivate " + componentName + " " + varName + ";\n");
+                strVar.Append("\t\tprivate " + componentName + " " + varName + (ScriptGeneratorSetting.Instance.NullableEnable ? " = null!;" : ";") + "\n");
                 switch (componentName)
                 {
                     case "Transform":
@@ -272,6 +273,7 @@ namespace TEngine.Editor.UI
                         {
                             strBind.Append($"\t\t\t{varName} = CreateWidgetByType<{componentName}>(\"{varPath}\");\n");
                         }
+
                         strBind.Append($"\t\t\t{varName} = FindChildComponent<{componentName}>(\"{varPath}\");\n");
                         break;
                 }
@@ -336,6 +338,7 @@ namespace TEngine.Editor.UI
                     GUILayout.Label(rule.componentName.ToString(), GUILayout.Width(150));
                     GUILayout.EndHorizontal();
                 }
+
                 GUILayout.EndVertical();
             }
         }
